@@ -12,10 +12,10 @@ public class ReadCSV {
 		try {
 			run();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+	
 			e.printStackTrace();
 		}
-		// TODO Auto-generated method stub
+	
 
 	}
 	public static void run() throws IOException {
