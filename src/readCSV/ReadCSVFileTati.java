@@ -18,6 +18,7 @@ public class ReadCSVFileTati {
 						+ " , Desc=" + products[1] + " , Quantity="
 						+ products[2] + "]");
 			}
+			// aenderung damits was zu komitten gibr
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

@@ -12,7 +12,7 @@ public class ReadCSV {
 		try {
 			run();
 		} catch (IOException e) {
-	
+	// eine aenderung ohne inhalt
 			e.printStackTrace();
 		}
 	
