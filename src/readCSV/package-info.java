@@ -1,8 +1,0 @@
-/**
- * 
- */
-/**
- * @author christian
- *
- */
-package readCSV;
