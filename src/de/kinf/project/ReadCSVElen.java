@@ -14,10 +14,18 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.opencsv.CSVReader;
 
 public class ReadCSVElen {
 
 	Connection conn;
+	
+	//HashMap for storing the column names
+	
+	Map<Integer, Integer > columnsMap = new HashMap<>();
 
 	public static void main(String[] args) throws ParseException,
 			ClassNotFoundException, SQLException {
@@ -36,6 +44,7 @@ public class ReadCSVElen {
 
 	public void run() throws SQLException {
 
+				
 		// String csvFile =
 		// "nik-2:/ christian$/Applications/XAMPP/xamppfiles/htdocs/miproject/migrationstreams/build/importCSV/data.csv";
 		//URL url = Resource("example_data.csv");
@@ -45,26 +54,69 @@ public class ReadCSVElen {
 		String line = "";
 		String csvSplitBy = ",";
 		int counter = 0;
-
 		try {
-  		   InputStream is = ReadCSVElen.class.getResourceAsStream("\\example_data.csv");
-		   
+  		    InputStream is = ReadCSVElen.class.getResourceAsStream("\\example_data.csv");
 		   	br = new BufferedReader(new InputStreamReader(is, "UTF8"));
-			br.readLine();
+		   	CSVReader csvr = new CSVReader(br);
+		   	String[] splittedColumns = csvr.readNext();
+		   
+					
+		   	//reading column titles to map 
+			for (int i= 0; i< splittedColumns.length; i++){
+				System.out.println(i + " " + splittedColumns[i]);
+				if (splittedColumns[i].contains("HS B")){
+					columnsMap.put(i, 1);
+				}
+				else if (splittedColumns[i].contains("HS C")){
+					columnsMap.put(i, 2);
+				}
+				
+				else if (splittedColumns[i].contains("HS D")){
+					columnsMap.put(i, 3);
+				}
+				else if (splittedColumns[i].contains("HS E")){
+					columnsMap.put(i, 4);
+				}
+				else if (splittedColumns[i].contains("HS F")){
+					columnsMap.put(i, 5);
+				}
+				else if (splittedColumns[i].contains("HS G")){
+					columnsMap.put(i, 6);
+				}
+				else if (splittedColumns[i].contains("HS H")){
+					columnsMap.put(i, 7);
+				}
+				else if (splittedColumns[i].contains("HS I")){
+					columnsMap.put(i, 8);
+				}
+				else if (splittedColumns[i].contains("HS J")){
+					columnsMap.put(i, 9);
+				}
+				else if (splittedColumns[i].contains("V E 38")){
+					columnsMap.put(i, 10);
+			}
+				
+				
+				
+		
+								
+			
+			System.out.println(columnsMap);
 			/*
 			 * int personId = 0; int countryOfBirthId; int denominationId; int
 			 * professionalCategoryId;
 			 */
-			System.out.println();
-
+		
 			while ((line = br.readLine()) != null) {
-				System.out.println(line);
+				//System.out.println(line);
 				String[] splittedRow = line.split(csvSplitBy);
 				counter++;
 
-				int pid = counter;
+				int pid = Integer.parseInt(splittedRow[0]);
 				int seite_original = Integer.parseInt(splittedRow[1]);
 				String nummer_hess = (splittedRow[2]);
+				String anrede = splittedRow[3];
+				String anrede_normal = splittedRow[4];
 				// String dayOfDeath = splittedRow[3];
 				// String denomination = splittedRow[4];
 				// String professionalCategory = splittedRow[5];
@@ -106,7 +158,7 @@ public class ReadCSVElen {
 				prepareInsertPerson.setInt(2, seite_original);
 				prepareInsertPerson.setString(3, nummer_hess);
 
-				prepareInsertPerson.executeUpdate();
+				//prepareInsertPerson.executeUpdate();
 				// ResultSet resultPerson =
 				// prepareInsertPerson.getGeneratedKeys();
 				// if (resultPerson.next()) {
@@ -144,7 +196,8 @@ public class ReadCSVElen {
 				// Integer.parseInt(migrationYear));
 				// prepareInsertMigration.setInt(5, personId);
 				// prepareInsertMigration.executeUpdate();
-				// }
+				 }
+			
 			}
 
 		} catch (FileNotFoundException e) {
