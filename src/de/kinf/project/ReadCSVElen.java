@@ -3,8 +3,11 @@ package de.kinf.project;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -35,7 +38,8 @@ public class ReadCSVElen {
 
 		// String csvFile =
 		// "nik-2:/ christian$/Applications/XAMPP/xamppfiles/htdocs/miproject/migrationstreams/build/importCSV/data.csv";
-		String csvFile = "C:\\Users\\Tatjana\\Documents\\Masterstudium\\SoSe2015\\Kinf-Projekt\\example_data.csv";
+		//URL url = Resource("example_data.csv");
+		//String csvFile = url.getPath().toString();
 
 		BufferedReader br = null;
 		String line = "";
@@ -43,9 +47,9 @@ public class ReadCSVElen {
 		int counter = 0;
 
 		try {
-
-			br = new BufferedReader(new InputStreamReader(new FileInputStream(
-					csvFile), "UTF8"));
+  		   InputStream is = ReadCSVElen.class.getResourceAsStream("\\example_data.csv");
+		   
+		   	br = new BufferedReader(new InputStreamReader(is, "UTF8"));
 			br.readLine();
 			/*
 			 * int personId = 0; int countryOfBirthId; int denominationId; int
@@ -54,6 +58,7 @@ public class ReadCSVElen {
 			System.out.println();
 
 			while ((line = br.readLine()) != null) {
+				System.out.println(line);
 				String[] splittedRow = line.split(csvSplitBy);
 				counter++;
 
