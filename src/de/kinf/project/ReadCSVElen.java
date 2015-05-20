@@ -64,7 +64,7 @@ public class ReadCSVElen {
 		 					
 		   	//reading column titles to map, used for mapping to primary keys 
 			for (int i= 0; i< splittedColumns.length; i++){
-				//System.out.println(i + " " + splittedColumns[i]);
+				System.out.println(i + " " + splittedColumns[i]);
 				if (splittedColumns[i].contains("HS B")){
 					columnsMap.put(i, 1);
 				}
@@ -96,10 +96,11 @@ public class ReadCSVElen {
 				else if (splittedColumns[i].contains("V E 38")){
 					columnsMap.put(i, 10);
 			}
+			}
 				
 				
 				
-			//System.out.println(columnsMap);
+			System.out.println(columnsMap);
 			/*
 			 * int personId = 0; int countryOfBirthId; int denominationId; int
 			 * professionalCategoryId;
@@ -118,13 +119,13 @@ public class ReadCSVElen {
 				//firstName Stuff
 				int firstNameKey;
 				String vorname = splittedRow[5];
-				//firstNameKey = writeFirstName(vorname, columnsMap.get(12));
+				firstNameKey = writeFirstName(vorname, columnsMap.get(7));
 				String vornameNormal = splittedRow[6];
-				//firstNameKey = writeFirstName(vornameNormal, columnsMap.get(11));
+				firstNameKey = writeFirstName(vornameNormal, columnsMap.get(9));
 				for (int j = 7; j <=16; j++){
 					if (!splittedRow[j].equals("")){
-						System.out.println("check" + " " + counter +  " " + j);
-						//firstNameKey = writeFirstName(vorname, columnsMap.get(j));
+						//System.out.println("check" + " " + counter +  " " + j);
+						firstNameKey = writeFirstName(vorname, columnsMap.get(j));
 					}
 				}
 				
@@ -200,8 +201,9 @@ public class ReadCSVElen {
 				// prepareInsertMigration.setInt(5, personId);
 				// prepareInsertMigration.executeUpdate();
 				 }
+			System.out.println(firstNameMap);
 			
-			}
+			
 
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -227,8 +229,8 @@ public class ReadCSVElen {
 			firstNameCounter++;
 			firstNameMap.put(firstName, firstNameCounter);
 			firstNameKey = firstNameCounter;
-			String insertFirstName = "INSERT INTO migrations(city, country_id, month, year, person_id)"
-					 + " VALUES (?, ?, ?, ?, ?)";
+			//String insertFirstName = "INSERT INTO migrations(city, country_id, month, year, person_id)"
+				//	 + " VALUES (?, ?, ?, ?, ?)";
 		}else{
 			firstNameKey = firstNameMap.get(firstName);
 		}
