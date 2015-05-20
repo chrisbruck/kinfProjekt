@@ -26,6 +26,8 @@ public class ReadCSVElen {
 	//HashMap for storing the column names
 	
 	Map<Integer, Integer > columnsMap = new HashMap<>();
+	Map<String, Integer > firstNameMap = new HashMap<>();
+	int firstNameCounter = 0;
 
 	public static void main(String[] args) throws ParseException,
 			ClassNotFoundException, SQLException {
@@ -51,7 +53,7 @@ public class ReadCSVElen {
 		//String csvFile = url.getPath().toString();
 
 		BufferedReader br = null;
-		String line = "";
+		String[] splittedRow;
 		String csvSplitBy = ",";
 		int counter = 0;
 		try {
@@ -59,11 +61,10 @@ public class ReadCSVElen {
 		   	br = new BufferedReader(new InputStreamReader(is, "UTF8"));
 		   	CSVReader csvr = new CSVReader(br);
 		   	String[] splittedColumns = csvr.readNext();
-		   
-					
-		   	//reading column titles to map 
+		 					
+		   	//reading column titles to map, used for mapping to primary keys 
 			for (int i= 0; i< splittedColumns.length; i++){
-				System.out.println(i + " " + splittedColumns[i]);
+				//System.out.println(i + " " + splittedColumns[i]);
 				if (splittedColumns[i].contains("HS B")){
 					columnsMap.put(i, 1);
 				}
@@ -98,18 +99,14 @@ public class ReadCSVElen {
 				
 				
 				
-		
-								
-			
-			System.out.println(columnsMap);
+			//System.out.println(columnsMap);
 			/*
 			 * int personId = 0; int countryOfBirthId; int denominationId; int
 			 * professionalCategoryId;
 			 */
 		
-			while ((line = br.readLine()) != null) {
+			while ((splittedRow = csvr.readNext()) != null) {
 				//System.out.println(line);
-				String[] splittedRow = line.split(csvSplitBy);
 				counter++;
 
 				int pid = Integer.parseInt(splittedRow[0]);
@@ -117,15 +114,20 @@ public class ReadCSVElen {
 				String nummer_hess = (splittedRow[2]);
 				String anrede = splittedRow[3];
 				String anrede_normal = splittedRow[4];
-				// String dayOfDeath = splittedRow[3];
-				// String denomination = splittedRow[4];
-				// String professionalCategory = splittedRow[5];
-				// String profession = splittedRow[6];
-				// String placeOfBirth = splittedRow[7];
-				// String countryOfBirth = splittedRow[8];
-				// String countryofBirthCode = splittedRow[9];
-				// String countryofBirthLatitude = splittedRow[10];
-				// String countryofBirthLongitude = splittedRow[11];
+								
+				//firstName Stuff
+				int firstNameKey;
+				String vorname = splittedRow[5];
+				//firstNameKey = writeFirstName(vorname, columnsMap.get(12));
+				String vornameNormal = splittedRow[6];
+				//firstNameKey = writeFirstName(vornameNormal, columnsMap.get(11));
+				for (int j = 7; j <=16; j++){
+					if (!splittedRow[j].equals("")){
+						System.out.println("check" + " " + counter +  " " + j);
+						//firstNameKey = writeFirstName(vorname, columnsMap.get(j));
+					}
+				}
+				
 				//
 				// denominationId = getDenominationId(denomination);
 				//
@@ -151,7 +153,8 @@ public class ReadCSVElen {
 				// countryOfBirthId = getCountryId(countryOfBirth);
 				// }
 				//
-				String insertPerson = "INSERT INTO personTest(pid, seite_original, nummer_hess) VALUES (?, ?, ?)";
+				String insertPerson = "INSERT INTO personTest(pid, seite_original, nummer_hess)"
+						+ " VALUES (?, ?, ?)";
 				PreparedStatement prepareInsertPerson = conn
 						.prepareStatement(insertPerson);
 				prepareInsertPerson.setInt(1, pid);
@@ -217,6 +220,22 @@ public class ReadCSVElen {
 		}
 
 	}
+	
+	private int writeFirstName(String firstName, int sourceId){
+		int firstNameKey = 0;
+		if (!firstNameMap.containsKey(firstName)){
+			firstNameCounter++;
+			firstNameMap.put(firstName, firstNameCounter);
+			firstNameKey = firstNameCounter;
+			String insertFirstName = "INSERT INTO migrations(city, country_id, month, year, person_id)"
+					 + " VALUES (?, ?, ?, ?, ?)";
+		}else{
+			firstNameKey = firstNameMap.get(firstName);
+		}
+	
+		return firstNameKey;
+	}
+	
 
 	public int getCountryId(String country) throws SQLException {
 		String queryCheckCountry = "SELECT * FROM countries WHERE country = ?";
