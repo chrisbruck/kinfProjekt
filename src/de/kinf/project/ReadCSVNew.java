@@ -19,7 +19,7 @@ import java.util.Map;
 
 import com.opencsv.CSVReader;
 
-public class ReadCSVElen {
+public class ReadCSVNew {
 
 	Connection conn;
 	
@@ -32,7 +32,7 @@ public class ReadCSVElen {
 	public static void main(String[] args) throws ParseException,
 			ClassNotFoundException, SQLException {
 
-		ReadCSVElen obj = new ReadCSVElen();
+		ReadCSVNew obj = new ReadCSVNew();
 		obj.connection();
 		obj.run();
 	}
@@ -57,7 +57,7 @@ public class ReadCSVElen {
 		String csvSplitBy = ",";
 		int counter = 0;
 		try {
-  		    InputStream is = ReadCSVElen.class.getResourceAsStream("\\example_data.csv");
+  		    InputStream is = ReadCSVNew.class.getResourceAsStream("\\example_data.csv");
 		   	br = new BufferedReader(new InputStreamReader(is, "UTF8"));
 		   	CSVReader csvr = new CSVReader(br);
 		   	String[] splittedColumns = csvr.readNext();
@@ -117,6 +117,8 @@ public class ReadCSVElen {
 				String anrede_normal = splittedRow[4];
 								
 				//firstName Stuff
+				//probably firstNameKey not needed; just forward currendt person id to helper function
+				//no first name field in person-table
 				int firstNameKey;
 				String vorname = splittedRow[5];
 				firstNameKey = writeFirstName(vorname, columnsMap.get(7));
@@ -125,35 +127,15 @@ public class ReadCSVElen {
 				for (int j = 7; j <=16; j++){
 					if (!splittedRow[j].equals("")){
 						//System.out.println("check" + " " + counter +  " " + j);
-						firstNameKey = writeFirstName(vorname, columnsMap.get(j));
+						firstNameKey = writeFirstName(splittedRow[j], columnsMap.get(j));
 					}
 				}
 				
-				//
-				// denominationId = getDenominationId(denomination);
-				//
-				// if (denominationId == -1) {
-				// createNewDenomination(denomination);
-				// denominationId = getDenominationId(denomination);
-				// }
-				//
-				// professionalCategoryId =
-				// getProfessionalCategoryId(professionalCategory);
-				//
-				// if (professionalCategoryId == -1) {
-				// createNewProfessionalCategory(professionalCategory);
-				// professionalCategoryId =
-				// getProfessionalCategoryId(professionalCategory);
-				// }
-				//
-				// countryOfBirthId = getCountryId(countryOfBirth);
-				//
-				// if (countryOfBirthId == -1) {
-				// createNewCountry(countryOfBirth, countryofBirthCode,
-				// countryofBirthLatitude, countryofBirthLongitude);
-				// countryOfBirthId = getCountryId(countryOfBirth);
-				// }
-				//
+				//lastName Stuff
+				
+				
+				
+			
 				String insertPerson = "INSERT INTO personTest(pid, seite_original, nummer_hess)"
 						+ " VALUES (?, ?, ?)";
 				PreparedStatement prepareInsertPerson = conn
@@ -162,44 +144,7 @@ public class ReadCSVElen {
 				prepareInsertPerson.setInt(2, seite_original);
 				prepareInsertPerson.setString(3, nummer_hess);
 
-				//prepareInsertPerson.executeUpdate();
-				// ResultSet resultPerson =
-				// prepareInsertPerson.getGeneratedKeys();
-				// if (resultPerson.next()) {
-				// personId = resultPerson.getInt(1);
-				// }
-				//
-				// for (int j = 12; j < splittedRow.length; j = j + 7) {
-				// int migrationCountryId;
-				// String migrationCountry = splittedRow[j];
-				// String migrationCountryCode = splittedRow[j + 1];
-				// String migrationCountryLatitude = splittedRow[j + 2];
-				// String migrationCountryLongitude = splittedRow[j + 3];
-				// String migrationCity = splittedRow[j + 4];
-				// int migrationMonth = (int) (Math.random() * 12 + 1);
-				// ;
-				// String migrationYear = splittedRow[j + 6];
-				//
-				// migrationCountryId = getCountryId(migrationCountry);
-				//
-				// if (migrationCountryId == -1) {
-				// createNewCountry(migrationCountry,
-				// migrationCountryCode, migrationCountryLatitude,
-				// migrationCountryLongitude);
-				// migrationCountryId = getCountryId(migrationCountry);
-				// }
-				//
-				// String insertMigration =
-				// "INSERT INTO migrations(city, country_id, month, year, person_id) VALUES (?, ?, ?, ?, ?)";
-				// PreparedStatement prepareInsertMigration = conn
-				// .prepareStatement(insertMigration);
-				// prepareInsertMigration.setString(1, migrationCity);
-				// prepareInsertMigration.setInt(2, migrationCountryId);
-				// prepareInsertMigration.setInt(3, migrationMonth);
-				// prepareInsertMigration.setInt(4,
-				// Integer.parseInt(migrationYear));
-				// prepareInsertMigration.setInt(5, personId);
-				// prepareInsertMigration.executeUpdate();
+				
 				 }
 			System.out.println(firstNameMap);
 			
