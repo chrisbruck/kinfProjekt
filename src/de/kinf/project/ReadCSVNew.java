@@ -25,12 +25,40 @@ public class ReadCSVNew {
 
 	// HashMap for storing the column names
 	private Map<Integer, Integer> columnsMap = new HashMap<>();
-	// HashMap for storing the column names
-	private Map<String, Integer> columnsNames = new HashMap<>();
+
+
 	private Map<String, Integer> firstNameMap = new HashMap<>();
 	int firstNameCounter = 0;
-	private static final int VORNAME_CAT = 0;
-
+	private static final int VORNAME_HS_B = 7;
+	private static final int VORNAME_AUB = 16;
+	private static final int NACHNAME_HS_B = 19;
+	private static final int NACHNAME_AUB = 28;
+	private static final int ORT_HS_B = 31;
+	private static final int ORT_AUB = 40;
+	private static final int WIRTLAGE_HS_B = 53;
+	private static final int WIRTLAGE_HS_J = 55;
+	private static final int SEMINAR_HS_B = 58;
+	private static final int SEMINAR_HS_J = 62;
+	private static final int ZUSATZ_HS_B = 67;
+	private static final int ZUSATZ_AUB = 76;
+	
+	private static final String VORNAME_SIMPLE_INSERT = "";
+	private static final String VORNAME_CONNECTED_INSERT = "INSERT INTO personen_vornamen(personen_id, vornamen_id,quellen_id) "
+			+ " VALUES (?, ?, ?)";
+	private static final String NACHNAME_SIMPLE_INSERT = "";
+	private static final String NACHNAME_CONNECTED_INSERT = "INSERT INTO personen_nachnamen(personen_id, nachnamen_id,quellen_id) "
+			+ " VALUES (?, ?, ?)";
+	private static final String ORT_SIMPLE_INSERT = "";
+	private static final String ORT_CONNECTED_INSERT = "INSERT INTO personen_ort(personen_id, ort_id,quellen_id) "
+			+ " VALUES (?, ?, ?)";
+	private static final String WIRTLAGE_SIMPLE_INSERT = "";
+	private static final String WIRTLAGE_CONNECTED_INSERT = "INSERT INTO personen_wirtlage(personen_id, wirtlage_id,quellen_id) "
+			+ " VALUES (?, ?, ?)";
+	private static final String SEMINAR_SIMPLE_INSERT = "";
+	private static final String SEMINAR_CONNECTED_INSERT = "INSERT INTO personen_seminar(personen_id, wirtlage_id,quellen_id) "
+			+ " VALUES (?, ?, ?)";
+	
+	
 	public static void main(String[] args) throws ParseException,
 			ClassNotFoundException, SQLException {
 
@@ -65,10 +93,10 @@ public class ReadCSVNew {
 			String[] splittedColumns = csvr.readNext();
 
 			generateColumnsMap(splittedColumns);
-			generateConstantValues(splittedColumns);
+		
 
 			System.out.println(columnsMap);
-			System.out.println(columnsNames);
+	
 			/*
 			 * int personId = 0; int countryOfBirthId; int denominationId; int
 			 * professionalCategoryId;
@@ -90,18 +118,16 @@ public class ReadCSVNew {
 				// firstNameKey = writeFirstName(vorname, columnsMap.get(7),
 				// pid);
 				String vornameNormal = splittedRow[6];
-				// firstNameKey = writeFirstName(vornameNormal,
-				// columnsMap.get(9), pid);
-				for (int j = columnsNames.get("VORNAME HS B (AUB, I 11)"); j <= columnsNames
-						.get("VORNAME AUB, V E 38)"); j++) {
-					if (!splittedRow[j].equals("")) {
-						nameKey = getKeyFromDatabase();
-						int[] values = { pid, nameKey, columnsMap.get(j),
-								VORNAME_CAT };
-						writetoConnectingTable(values);
-					}
-				}
-
+				iterateOverColumns(splittedRow, pid, VORNAME_HS_B, VORNAME_AUB, 
+						VORNAME_SIMPLE_INSERT, VORNAME_CONNECTED_INSERT);
+				iterateOverColumns(splittedRow, pid, NACHNAME_HS_B, NACHNAME_AUB,
+						NACHNAME_SIMPLE_INSERT, NACHNAME_CONNECTED_INSERT );
+				iterateOverColumns(splittedRow, pid, ORT_HS_B, ORT_AUB,
+						ORT_SIMPLE_INSERT, ORT_CONNECTED_INSERT);
+				iterateOverColumns(splittedRow, pid, WIRTLAGE_HS_B, WIRTLAGE_HS_J, 
+						WIRTLAGE_SIMPLE_INSERT, WIRTLAGE_CONNECTED_INSERT);
+				iterateOverColumns(splittedRow, pid, SEMINAR_HS_B, SEMINAR_HS_J,
+						SEMINAR_SIMPLE_INSERT, SEMINAR_CONNECTED_INSERT);
 				// lastName Stuff
 
 			}
@@ -124,18 +150,21 @@ public class ReadCSVNew {
 
 	}
 
-	private void writetoConnectingTable(int[] values) {
-		PreparedStatement preparedStatement;
-		String insertString="";
-		switch (values[3]) {
-		case VORNAME_CAT:
-			insertString = "INSERT INTO personen_vornamen(personen_id, vornamen_id,quellen_id) "
-					+ " VALUES (?, ?, ?)";
-			break;
-
-		default:
-			break;
+	private void iterateOverColumns(String[] splittedRow, int pid, int start, int end, String sQLSimple,
+			String sQLConnected){
+		for (int j = start; j <= end; j++) {
+			if (!splittedRow[j].equals("")) {
+				int nameKey = getKeyFromDatabase(sQLSimple);
+				int[] values = { pid, nameKey, columnsMap.get(j)};
+				writeToConnectingTable(values, sQLConnected);
+			}
 		}
+	
+	}
+	
+	private void writeToConnectingTable(int[] values, String sql) {
+		PreparedStatement preparedStatement;
+		String insertString=sql;
 		try {
 			preparedStatement = conn.prepareStatement(insertString);
 			preparedStatement.setInt(1, values[0]);
@@ -149,16 +178,12 @@ public class ReadCSVNew {
 
 	}
 
-	private int getKeyFromDatabase() {
+	private int getKeyFromDatabase(String sql) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	private void generateConstantValues(String[] splittedColumns) {
-		for (int i = 0; i < splittedColumns.length; i++) {
-			columnsNames.put(splittedColumns[i], i);
-		}
-	}
+
 
 	private void generateColumnsMap(String splittedColumns[]) {
 		// reading column titles to map, used for mapping to primary keys
@@ -190,8 +215,12 @@ public class ReadCSVNew {
 			}
 		}
 	}
+	
+	private void generateSQLStatementMap(){
+		
+	}
 
-	private int writeFirstName(String firstName, int sourceId, int personId) {
+	private void writeFirstName(String firstName, int sourceId, int personId) {
 		int firstNameKey = 0;
 		if (!firstNameMap.containsKey(firstName)) {
 			firstNameCounter++;
@@ -201,23 +230,6 @@ public class ReadCSVNew {
 		} else {
 			firstNameKey = firstNameMap.get(firstName);
 		}
-		String insertFirstName = "INSERT INTO personen_vornamen(personen_id, vornamen_id,quellen_id) "
-				+ " VALUES (?, ?, ?)";
-		System.out.println(personId + " " + firstName + " " + firstNameKey
-				+ " " + sourceId);
-		PreparedStatement prepareInsertFirstName;
-		try {
-			prepareInsertFirstName = conn.prepareStatement(insertFirstName);
-			prepareInsertFirstName.setInt(1, personId);
-			prepareInsertFirstName.setInt(2, firstNameKey);
-			prepareInsertFirstName.setInt(3, sourceId);
-			// prepareInsertFirstName.executeUpdate();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return firstNameKey;
+	
 	}
-
 }
