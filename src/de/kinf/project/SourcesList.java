@@ -14,6 +14,7 @@ public class SourcesList {
 	public static final int AUB_V=  10;
 	public static final int NORMAL=  11;
 	public static final int OHNE_ZUSATZ=  12;
+	public static final int ABWEICH_NORMAL=  13;
 	
 
 }

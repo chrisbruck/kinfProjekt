@@ -240,6 +240,9 @@ public class ReadCSVNew {
 				} else if (splittedColumns[i].contains("V E 38")) {
 					columnsMap.put(i, SourcesList.AUB_V);
 				} else if (splittedColumns[i].contains("NORMAL")) {
+					if(splittedColumns[i].contains("ABWEICH")){
+						columnsMap.put(i, SourcesList.ABWEICH_NORMAL);
+					}else
 					columnsMap.put(i, SourcesList.NORMAL);
 				} else {
 					columnsMap.put(i, SourcesList.OHNE_ZUSATZ);
