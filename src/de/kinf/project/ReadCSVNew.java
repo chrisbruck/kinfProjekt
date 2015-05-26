@@ -26,39 +26,54 @@ public class ReadCSVNew {
 	// HashMap for storing the column names
 	private Map<Integer, Integer> columnsMap = new HashMap<>();
 
-
 	private Map<String, Integer> firstNameMap = new HashMap<>();
 	int firstNameCounter = 0;
-	private static final int VORNAME_HS_B = 7;
+	private static final int VORNAME = 5;
 	private static final int VORNAME_AUB = 16;
-	private static final int NACHNAME_HS_B = 19;
+	private static final int NACHNAME_HS_B = 18;
 	private static final int NACHNAME_AUB = 28;
-	private static final int ORT_HS_B = 31;
-	private static final int ORT_AUB = 40;
-	private static final int WIRTLAGE_HS_B = 53;
+	private static final int ORT_HS_B = 30;
+	// ORT abweichend??? normal
+	private static final int ORT_NORMAL = 41;
+	private static final int WIRTLAGE = 51;
 	private static final int WIRTLAGE_HS_J = 55;
-	private static final int SEMINAR_HS_B = 58;
+	private static final int SEMINAR = 56;
 	private static final int SEMINAR_HS_J = 62;
-	private static final int ZUSATZ_HS_B = 67;
-	private static final int ZUSATZ_AUB = 76;
-	
+	private static final int ZUSAETZE = 66;
+	private static final int ZUSAETZE_AUB = 76;
+
 	private static final String VORNAME_SIMPLE_INSERT = "";
+	private static final String VORNAME_QUERY = "INSERT INTO personen_vornamen(personen_id, vornamen_id,quellen_id) "
+			+ " VALUES (?, ?, ?)";
 	private static final String VORNAME_CONNECTED_INSERT = "INSERT INTO personen_vornamen(personen_id, vornamen_id,quellen_id) "
 			+ " VALUES (?, ?, ?)";
 	private static final String NACHNAME_SIMPLE_INSERT = "";
+	private static final String NACHNAME_QUERY = "INSERT INTO personen_vornamen(personen_id, vornamen_id,quellen_id) "
+			+ " VALUES (?, ?, ?)";
 	private static final String NACHNAME_CONNECTED_INSERT = "INSERT INTO personen_nachnamen(personen_id, nachnamen_id,quellen_id) "
 			+ " VALUES (?, ?, ?)";
 	private static final String ORT_SIMPLE_INSERT = "";
+	private static final String ORT_QUERY = "INSERT INTO personen_vornamen(personen_id, vornamen_id,quellen_id) "
+			+ " VALUES (?, ?, ?)";
 	private static final String ORT_CONNECTED_INSERT = "INSERT INTO personen_ort(personen_id, ort_id,quellen_id) "
 			+ " VALUES (?, ?, ?)";
 	private static final String WIRTLAGE_SIMPLE_INSERT = "";
+	private static final String WIRTLAGE_QUERY = "INSERT INTO personen_vornamen(personen_id, vornamen_id,quellen_id) "
+			+ " VALUES (?, ?, ?)";
 	private static final String WIRTLAGE_CONNECTED_INSERT = "INSERT INTO personen_wirtlage(personen_id, wirtlage_id,quellen_id) "
 			+ " VALUES (?, ?, ?)";
 	private static final String SEMINAR_SIMPLE_INSERT = "";
+	private static final String SEMINAR_QUERY = "INSERT INTO personen_vornamen(personen_id, vornamen_id,quellen_id) "
+			+ " VALUES (?, ?, ?)";
 	private static final String SEMINAR_CONNECTED_INSERT = "INSERT INTO personen_seminar(personen_id, wirtlage_id,quellen_id) "
 			+ " VALUES (?, ?, ?)";
-	
-	
+
+	private static final String ZUSATZ_SIMPLE_INSERT = "";
+	private static final String ZUSATZ_QUERY = "INSERT INTO personen_vornamen(personen_id, vornamen_id,quellen_id) "
+			+ " VALUES (?, ?, ?)";
+	private static final String ZUSATZ_CONNECTED_INSERT = "INSERT INTO personen_seminar(personen_id, wirtlage_id,quellen_id) "
+			+ " VALUES (?, ?, ?)";
+
 	public static void main(String[] args) throws ParseException,
 			ClassNotFoundException, SQLException {
 
@@ -93,10 +108,9 @@ public class ReadCSVNew {
 			String[] splittedColumns = csvr.readNext();
 
 			generateColumnsMap(splittedColumns);
-		
 
 			System.out.println(columnsMap);
-	
+
 			/*
 			 * int personId = 0; int countryOfBirthId; int denominationId; int
 			 * professionalCategoryId;
@@ -112,23 +126,30 @@ public class ReadCSVNew {
 				String anrede = splittedRow[3];
 				String anrede_normal = splittedRow[4];
 
-				// firstName Stuff
-				int nameKey;
-				String vorname = splittedRow[5];
-				// firstNameKey = writeFirstName(vorname, columnsMap.get(7),
-				// pid);
-				String vornameNormal = splittedRow[6];
-				iterateOverColumns(splittedRow, pid, VORNAME_HS_B, VORNAME_AUB, 
-						VORNAME_SIMPLE_INSERT, VORNAME_CONNECTED_INSERT);
-				iterateOverColumns(splittedRow, pid, NACHNAME_HS_B, NACHNAME_AUB,
-						NACHNAME_SIMPLE_INSERT, NACHNAME_CONNECTED_INSERT );
-				iterateOverColumns(splittedRow, pid, ORT_HS_B, ORT_AUB,
-						ORT_SIMPLE_INSERT, ORT_CONNECTED_INSERT);
-				iterateOverColumns(splittedRow, pid, WIRTLAGE_HS_B, WIRTLAGE_HS_J, 
-						WIRTLAGE_SIMPLE_INSERT, WIRTLAGE_CONNECTED_INSERT);
-				iterateOverColumns(splittedRow, pid, SEMINAR_HS_B, SEMINAR_HS_J,
-						SEMINAR_SIMPLE_INSERT, SEMINAR_CONNECTED_INSERT);
+					
+
+				iterateOverColumns(splittedRow, pid, VORNAME, VORNAME_AUB,
+						VORNAME_QUERY, VORNAME_SIMPLE_INSERT,
+						VORNAME_CONNECTED_INSERT);
+				
+				iterateOverColumns(splittedRow, pid, NACHNAME_HS_B,
+						NACHNAME_AUB, NACHNAME_QUERY, NACHNAME_SIMPLE_INSERT,
+						NACHNAME_CONNECTED_INSERT);
+				
+				iterateOverColumns(splittedRow, pid, ORT_HS_B, ORT_NORMAL,
+						ORT_QUERY, ORT_SIMPLE_INSERT, ORT_CONNECTED_INSERT);
+				
+				iterateOverColumns(splittedRow, pid, WIRTLAGE, WIRTLAGE_HS_J,
+						WIRTLAGE_QUERY, WIRTLAGE_SIMPLE_INSERT,
+						WIRTLAGE_CONNECTED_INSERT);
+				
+				iterateOverColumns(splittedRow, pid, SEMINAR, SEMINAR_HS_J,
+						SEMINAR_QUERY, SEMINAR_SIMPLE_INSERT,
+						SEMINAR_CONNECTED_INSERT);
 				// lastName Stuff
+				iterateOverColumns(splittedRow, pid, ZUSAETZE, ZUSAETZE_AUB,
+						ZUSATZ_QUERY, ZUSATZ_SIMPLE_INSERT,
+						ZUSATZ_CONNECTED_INSERT);
 
 			}
 
@@ -150,21 +171,22 @@ public class ReadCSVNew {
 
 	}
 
-	private void iterateOverColumns(String[] splittedRow, int pid, int start, int end, String sQLSimple,
-			String sQLConnected){
+	private void iterateOverColumns(String[] splittedRow, int pid, int start,
+			int end, String sQLQuery, String sQLSimple, String sQLConnected) {
 		for (int j = start; j <= end; j++) {
 			if (!splittedRow[j].equals("")) {
-				int nameKey = getKeyFromDatabase(sQLSimple);
-				int[] values = { pid, nameKey, columnsMap.get(j)};
+				int nameKey = getKeyFromDatabase(splittedRow[j], sQLQuery,
+						sQLSimple);
+				int[] values = { pid, nameKey, columnsMap.get(j) };
 				writeToConnectingTable(values, sQLConnected);
 			}
 		}
-	
+
 	}
-	
+
 	private void writeToConnectingTable(int[] values, String sql) {
 		PreparedStatement preparedStatement;
-		String insertString=sql;
+		String insertString = sql;
 		try {
 			preparedStatement = conn.prepareStatement(insertString);
 			preparedStatement.setInt(1, values[0]);
@@ -178,46 +200,54 @@ public class ReadCSVNew {
 
 	}
 
-	private int getKeyFromDatabase(String sql) {
+	private int getKeyFromDatabase(String value, String sqlQuery,
+			String sqlInsert) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
-
-
 
 	private void generateColumnsMap(String splittedColumns[]) {
 		// reading column titles to map, used for mapping to primary keys
 		// hier vielleicht auch noch Kurzfassung wie VN_HS_B unterbringen
 		for (int i = 0; i < splittedColumns.length; i++) {
 			System.out.println(i + " " + splittedColumns[i]);
-			if (splittedColumns[i].contains("HS B")) {
-				columnsMap.put(i, SourcesList.HS_B);
-			} else if (splittedColumns[i].contains("HS C")) {
-				columnsMap.put(i, SourcesList.HS_C);
-			}
+			if (splittedColumns[i].contains("VORNAME")
+					|| splittedColumns[i].contains("NACHNAME")
+					|| splittedColumns[i].contains("ORT")
+					|| splittedColumns[i].contains("ORT")
+					|| splittedColumns[i].contains("WIRT_LAGE")
+					|| splittedColumns[i].contains("SEMINAR")
+					|| splittedColumns[i].contains("ZUSAETZE")) {
 
-			else if (splittedColumns[i].contains("HS D")) {
-				columnsMap.put(i, SourcesList.HS_D);
-			} else if (splittedColumns[i].contains("HS E")) {
-				columnsMap.put(i, SourcesList.HS_E);
-			} else if (splittedColumns[i].contains("HS F")) {
-				columnsMap.put(i, SourcesList.HS_F);
-			} else if (splittedColumns[i].contains("HS G")) {
-				columnsMap.put(i, SourcesList.HS_G);
-			} else if (splittedColumns[i].contains("HS H")) {
-				columnsMap.put(i, SourcesList.HS_H);
-			} else if (splittedColumns[i].contains("HS I")) {
-				columnsMap.put(i, SourcesList.HS_I);
-			} else if (splittedColumns[i].contains("HS J")) {
-				columnsMap.put(i, SourcesList.HS_J);
-			} else if (splittedColumns[i].contains("V E 38")) {
-				columnsMap.put(i, SourcesList.AUB_V);
+				if (splittedColumns[i].contains("HS B")) {
+					columnsMap.put(i, SourcesList.HS_B);
+				} else if (splittedColumns[i].contains("HS C")) {
+					columnsMap.put(i, SourcesList.HS_C);
+				} else if (splittedColumns[i].contains("HS D")) {
+					columnsMap.put(i, SourcesList.HS_D);
+				} else if (splittedColumns[i].contains("HS E")) {
+					columnsMap.put(i, SourcesList.HS_E);
+				} else if (splittedColumns[i].contains("HS F")) {
+					columnsMap.put(i, SourcesList.HS_F);
+				} else if (splittedColumns[i].contains("HS G")) {
+					columnsMap.put(i, SourcesList.HS_G);
+				} else if (splittedColumns[i].contains("HS H")) {
+					columnsMap.put(i, SourcesList.HS_H);
+				} else if (splittedColumns[i].contains("HS I")) {
+					columnsMap.put(i, SourcesList.HS_I);
+				} else if (splittedColumns[i].contains("HS J")) {
+					columnsMap.put(i, SourcesList.HS_J);
+				} else if (splittedColumns[i].contains("V E 38")) {
+					columnsMap.put(i, SourcesList.AUB_V);
+				} else if (splittedColumns[i].contains("NORMAL")) {
+					columnsMap.put(i, SourcesList.NORMAL);
+				} else {
+					columnsMap.put(i, SourcesList.OHNE_ZUSATZ);
+				}
+
 			}
 		}
-	}
-	
-	private void generateSQLStatementMap(){
-		
+
 	}
 
 	private void writeFirstName(String firstName, int sourceId, int personId) {
@@ -230,6 +260,6 @@ public class ReadCSVNew {
 		} else {
 			firstNameKey = firstNameMap.get(firstName);
 		}
-	
+
 	}
 }
