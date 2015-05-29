@@ -26,8 +26,8 @@ public class ReadCSVNew {
 	// HashMap for storing the column names
 	private Map<Integer, Integer> columnsMap = new HashMap<>();
 
-	private Map<String, Integer> firstNameMap = new HashMap<>();
-	int firstNameCounter = 0;
+	//private Map<String, Integer> firstNameMap = new HashMap<>();
+	//int firstNameCounter = 0;
 	private static final int VORNAME = 5;
 	private static final int VORNAME_AUB = 16;
 	private static final int NACHNAME_HS_B = 18;
@@ -42,9 +42,8 @@ public class ReadCSVNew {
 	private static final int ZUSAETZE = 66;
 	private static final int ZUSAETZE_AUB = 76;
 
-	private static final String VORNAME_SIMPLE_INSERT = "";
-	private static final String VORNAME_QUERY = "INSERT INTO personen_vornamen(personen_id, vornamen_id,quellen_id) "
-			+ " VALUES (?, ?, ?)";
+	private static final String VORNAME_SIMPLE_INSERT = "INSERT INTO vornamen_liste(vorname_titel) VALUES (?)";
+	private static final String VORNAME_QUERY = "SELECT vorname_id FROM vornamen_liste WHERE vorname_titel = ?";
 	private static final String VORNAME_CONNECTED_INSERT = "INSERT INTO personen_vornamen(personen_id, vornamen_id,quellen_id) "
 			+ " VALUES (?, ?, ?)";
 	private static final String NACHNAME_SIMPLE_INSERT = "";
@@ -126,30 +125,28 @@ public class ReadCSVNew {
 				String anrede = splittedRow[3];
 				String anrede_normal = splittedRow[4];
 
-					
-
 				iterateOverColumns(splittedRow, pid, VORNAME, VORNAME_AUB,
 						VORNAME_QUERY, VORNAME_SIMPLE_INSERT,
 						VORNAME_CONNECTED_INSERT);
 				
-				iterateOverColumns(splittedRow, pid, NACHNAME_HS_B,
-						NACHNAME_AUB, NACHNAME_QUERY, NACHNAME_SIMPLE_INSERT,
-						NACHNAME_CONNECTED_INSERT);
-				
-				iterateOverColumns(splittedRow, pid, ORT_HS_B, ORT_NORMAL,
-						ORT_QUERY, ORT_SIMPLE_INSERT, ORT_CONNECTED_INSERT);
-				
-				iterateOverColumns(splittedRow, pid, WIRTLAGE, WIRTLAGE_HS_J,
-						WIRTLAGE_QUERY, WIRTLAGE_SIMPLE_INSERT,
-						WIRTLAGE_CONNECTED_INSERT);
-				
-				iterateOverColumns(splittedRow, pid, SEMINAR, SEMINAR_HS_J,
-						SEMINAR_QUERY, SEMINAR_SIMPLE_INSERT,
-						SEMINAR_CONNECTED_INSERT);
-				// lastName Stuff
-				iterateOverColumns(splittedRow, pid, ZUSAETZE, ZUSAETZE_AUB,
-						ZUSATZ_QUERY, ZUSATZ_SIMPLE_INSERT,
-						ZUSATZ_CONNECTED_INSERT);
+//				iterateOverColumns(splittedRow, pid, NACHNAME_HS_B,
+//						NACHNAME_AUB, NACHNAME_QUERY, NACHNAME_SIMPLE_INSERT,
+//						NACHNAME_CONNECTED_INSERT);
+//				
+//				iterateOverColumns(splittedRow, pid, ORT_HS_B, ORT_NORMAL,
+//						ORT_QUERY, ORT_SIMPLE_INSERT, ORT_CONNECTED_INSERT);
+//				
+//				iterateOverColumns(splittedRow, pid, WIRTLAGE, WIRTLAGE_HS_J,
+//						WIRTLAGE_QUERY, WIRTLAGE_SIMPLE_INSERT,
+//						WIRTLAGE_CONNECTED_INSERT);
+//				
+//				iterateOverColumns(splittedRow, pid, SEMINAR, SEMINAR_HS_J,
+//						SEMINAR_QUERY, SEMINAR_SIMPLE_INSERT,
+//						SEMINAR_CONNECTED_INSERT);
+//				// lastName Stuff
+//				iterateOverColumns(splittedRow, pid, ZUSAETZE, ZUSAETZE_AUB,
+//						ZUSATZ_QUERY, ZUSATZ_SIMPLE_INSERT,
+//						ZUSATZ_CONNECTED_INSERT);
 
 			}
 
@@ -175,9 +172,20 @@ public class ReadCSVNew {
 			int end, String sQLQuery, String sQLSimple, String sQLConnected) {
 		for (int j = start; j <= end; j++) {
 			if (!splittedRow[j].equals("")) {
-				int nameKey = getKeyFromDatabase(splittedRow[j], sQLQuery,
-						sQLSimple);
+				
+				int nameKey=0;
+				try {
+					nameKey = getKeyFromDatabase(splittedRow[j], sQLQuery,
+							sQLSimple);
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				int[] values = { pid, nameKey, columnsMap.get(j) };
+				for (int i : values){
+				//System.out.print(i +" ");
+				}
+				//System.out.println();
 				writeToConnectingTable(values, sQLConnected);
 			}
 		}
@@ -192,7 +200,8 @@ public class ReadCSVNew {
 			preparedStatement.setInt(1, values[0]);
 			preparedStatement.setInt(2, values[1]);
 			preparedStatement.setInt(3, values[2]);
-			// prepareInsertFirstName.executeUpdate();
+			System.out.println("" + values[0]+ " " + values[1] + " " + values[2]);
+			//preparedStatement.executeUpdate();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -201,9 +210,35 @@ public class ReadCSVNew {
 	}
 
 	private int getKeyFromDatabase(String value, String sqlQuery,
-			String sqlInsert) {
-		// TODO Auto-generated method stub
-		return 0;
+			String sqlInsert) throws SQLException{
+		
+		  String queryCheckValue = sqlQuery;
+		  PreparedStatement prepareCheckValue = conn.prepareStatement(queryCheckValue);
+		  prepareCheckValue.setString(1, value);
+		  		  
+		  ResultSet resultCheckCountry = prepareCheckValue.executeQuery();
+		  if(!resultCheckCountry.next()) {
+			 insertIntoDatabase(sqlInsert, value);
+			  String queryCheck = sqlQuery;
+			  PreparedStatement prepareCheck = conn.prepareStatement(queryCheck);
+			  prepareCheckValue.setString(1, value);
+			   
+			  ResultSet result = prepareCheck.executeQuery();
+			 //System.out.println(getKeyFromDatabase(value, sqlQuery, sqlInsert));
+			 return result.getInt(1);
+		  } else {
+			  return resultCheckCountry.getInt(1);
+		  }
+	
+	}
+	
+	
+	private void insertIntoDatabase  (String sqlQuery, String value) throws SQLException{
+		String insertQuery = sqlQuery;
+		PreparedStatement prepareCheckValue = conn.prepareStatement(insertQuery);
+		prepareCheckValue.setString(1, value);
+		prepareCheckValue.executeUpdate();
+		
 	}
 
 	private void generateColumnsMap(String splittedColumns[]) {
@@ -255,14 +290,14 @@ public class ReadCSVNew {
 
 	private void writeFirstName(String firstName, int sourceId, int personId) {
 		int firstNameKey = 0;
-		if (!firstNameMap.containsKey(firstName)) {
-			firstNameCounter++;
-			firstNameMap.put(firstName, firstNameCounter);
-			firstNameKey = firstNameCounter;
-
-		} else {
-			firstNameKey = firstNameMap.get(firstName);
-		}
+//		if (!firstNameMap.containsKey(firstName)) {
+//			firstNameCounter++;
+//			firstNameMap.put(firstName, firstNameCounter);
+//			firstNameKey = firstNameCounter;
+//
+//		} else {
+//			firstNameKey = firstNameMap.get(firstName);
+//		}
 
 	}
 }
