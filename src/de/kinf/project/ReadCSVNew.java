@@ -46,29 +46,25 @@ public class ReadCSVNew {
 	private static final String VORNAME_QUERY = "SELECT vorname_id FROM vornamen_liste WHERE vorname_titel = ?";
 	private static final String VORNAME_CONNECTED_INSERT = "INSERT INTO personen_vornamen(personen_id, vornamen_id,quellen_id) "
 			+ " VALUES (?, ?, ?)";
-	private static final String NACHNAME_SIMPLE_INSERT = "";
-	private static final String NACHNAME_QUERY = "INSERT INTO personen_vornamen(personen_id, vornamen_id,quellen_id) "
-			+ " VALUES (?, ?, ?)";
+	private static final String NACHNAME_SIMPLE_INSERT = "INSERT INTO nachnamen_liste(nachname_titel) VALUES (?)";
+	private static final String NACHNAME_QUERY = "SELECT nachname_id FROM nachnamen_liste WHERE nachname_titel = ?";
 	private static final String NACHNAME_CONNECTED_INSERT = "INSERT INTO personen_nachnamen(personen_id, nachnamen_id,quellen_id) "
 			+ " VALUES (?, ?, ?)";
-	private static final String ORT_SIMPLE_INSERT = "";
-	private static final String ORT_QUERY = "INSERT INTO personen_vornamen(personen_id, vornamen_id,quellen_id) "
-			+ " VALUES (?, ?, ?)";
+	private static final String ORT_SIMPLE_INSERT = "INSERT INTO ort_liste(ort_titel) VALUES (?)";
+	private static final String ORT_QUERY = "SELECT ort_id FROM ort_liste WHERE ort_titel = ?";
 	private static final String ORT_CONNECTED_INSERT = "INSERT INTO personen_ort(personen_id, ort_id,quellen_id) "
 			+ " VALUES (?, ?, ?)";
-	private static final String WIRTLAGE_SIMPLE_INSERT = "";
-	private static final String WIRTLAGE_QUERY = "INSERT INTO personen_vornamen(personen_id, vornamen_id,quellen_id) "
+	private static final String WIRTLAGE_SIMPLE_INSERT = "INSERT INTO wirtschaftslage_liste(wl_titel) VALUES (?)";
+	private static final String WIRTLAGE_QUERY = "SELECT wl_id FROM wirtschaftslage_liste WHERE wl_titel = ?";
+	private static final String WIRTLAGE_CONNECTED_INSERT = "INSERT INTO personen_wirtlage(person_id, wl_id,quelle_id) "
 			+ " VALUES (?, ?, ?)";
-	private static final String WIRTLAGE_CONNECTED_INSERT = "INSERT INTO personen_wirtlage(personen_id, wirtlage_id,quellen_id) "
-			+ " VALUES (?, ?, ?)";
-	private static final String SEMINAR_SIMPLE_INSERT = "";
-	private static final String SEMINAR_QUERY = "INSERT INTO personen_vornamen(personen_id, vornamen_id,quellen_id) "
-			+ " VALUES (?, ?, ?)";
-	private static final String SEMINAR_CONNECTED_INSERT = "INSERT INTO personen_seminar(personen_id, wirtlage_id,quellen_id) "
+	private static final String SEMINAR_SIMPLE_INSERT = "INSERT INTO seminar_liste(seminar_titel) VALUES (?)";
+	private static final String SEMINAR_QUERY = "SELECT seminar_id FROM seminar_liste WHERE seminar_titel = ?";
+	private static final String SEMINAR_CONNECTED_INSERT = "INSERT INTO person_seminar(person_id, seminar_id,quelle_id) "
 			+ " VALUES (?, ?, ?)";
 
-	private static final String ZUSATZ_SIMPLE_INSERT = "";
-	private static final String ZUSATZ_QUERY = "INSERT INTO personen_vornamen(personen_id, vornamen_id,quellen_id) "
+	private static final String ZUSATZ_SIMPLE_INSERT = "INSERT INTO zusatz_liste(zusatz_titel) VALUES (?)";
+	private static final String ZUSATZ_QUERY = "INSERT INTO personen_(personen_id, vornamen_id,quellen_id) "
 			+ " VALUES (?, ?, ?)";
 	private static final String ZUSATZ_CONNECTED_INSERT = "INSERT INTO personen_seminar(personen_id, wirtlage_id,quellen_id) "
 			+ " VALUES (?, ?, ?)";
