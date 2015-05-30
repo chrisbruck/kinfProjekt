@@ -175,8 +175,11 @@ public class ReadCSVNew {
 				
 				int nameKey=0;
 				try {
-					nameKey = getKeyFromDatabase(splittedRow[j], sQLQuery,
-							sQLSimple);
+					nameKey = queryValue(sQLQuery, splittedRow[j]);
+					if (nameKey == -1){
+						insertIntoDatabase(sQLSimple, splittedRow[j]);
+						nameKey = queryValue(sQLQuery, splittedRow[j]);
+					}
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -201,7 +204,7 @@ public class ReadCSVNew {
 			preparedStatement.setInt(2, values[1]);
 			preparedStatement.setInt(3, values[2]);
 			System.out.println("" + values[0]+ " " + values[1] + " " + values[2]);
-			//preparedStatement.executeUpdate();
+			preparedStatement.executeUpdate();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -209,27 +212,18 @@ public class ReadCSVNew {
 
 	}
 
-	private int getKeyFromDatabase(String value, String sqlQuery,
-			String sqlInsert) throws SQLException{
 		
-		  String queryCheckValue = sqlQuery;
-		  PreparedStatement prepareCheckValue = conn.prepareStatement(queryCheckValue);
-		  prepareCheckValue.setString(1, value);
-		  		  
-		  ResultSet resultCheckCountry = prepareCheckValue.executeQuery();
-		  if(!resultCheckCountry.next()) {
-			 insertIntoDatabase(sqlInsert, value);
-			  String queryCheck = sqlQuery;
-			  PreparedStatement prepareCheck = conn.prepareStatement(queryCheck);
-			  prepareCheckValue.setString(1, value);
-			   
-			  ResultSet result = prepareCheck.executeQuery();
-			 //System.out.println(getKeyFromDatabase(value, sqlQuery, sqlInsert));
-			 return result.getInt(1);
-		  } else {
-			  return resultCheckCountry.getInt(1);
-		  }
-	
+	private int queryValue(String sqlQuery, String value) throws SQLException{
+		PreparedStatement prepareCheckValue = conn.prepareStatement(sqlQuery);
+		prepareCheckValue.setString(1, value);
+		ResultSet resultCheck = prepareCheckValue.executeQuery();
+		if(!resultCheck.next()){
+			return -1;
+		}else{
+			return resultCheck.getInt(1);
+		}
+		
+		
 	}
 	
 	
@@ -238,7 +232,7 @@ public class ReadCSVNew {
 		PreparedStatement prepareCheckValue = conn.prepareStatement(insertQuery);
 		prepareCheckValue.setString(1, value);
 		prepareCheckValue.executeUpdate();
-		
+			
 	}
 
 	private void generateColumnsMap(String splittedColumns[]) {
