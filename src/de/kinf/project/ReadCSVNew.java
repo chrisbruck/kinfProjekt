@@ -26,8 +26,8 @@ public class ReadCSVNew {
 	// HashMap for storing the column names
 	private Map<Integer, Integer> columnsMap = new HashMap<>();
 
-	//private Map<String, Integer> firstNameMap = new HashMap<>();
-	//int firstNameCounter = 0;
+	// private Map<String, Integer> firstNameMap = new HashMap<>();
+	// int firstNameCounter = 0;
 	private static final int VORNAME = 5;
 	private static final int VORNAME_AUB = 16;
 	private static final int NACHNAME_HS_B = 18;
@@ -48,15 +48,15 @@ public class ReadCSVNew {
 			+ " VALUES (?, ?, ?)";
 	private static final String NACHNAME_SIMPLE_INSERT = "INSERT INTO nachnamen_liste(nachname_titel) VALUES (?)";
 	private static final String NACHNAME_QUERY = "SELECT nachname_id FROM nachnamen_liste WHERE nachname_titel = ?";
-	private static final String NACHNAME_CONNECTED_INSERT = "INSERT INTO personen_nachnamen(personen_id, nachnamen_id,quellen_id) "
+	private static final String NACHNAME_CONNECTED_INSERT = "INSERT INTO personen_nachnamen(person_id, nachname_id,quelle_id) "
 			+ " VALUES (?, ?, ?)";
 	private static final String ORT_SIMPLE_INSERT = "INSERT INTO ort_liste(ort_titel) VALUES (?)";
 	private static final String ORT_QUERY = "SELECT ort_id FROM ort_liste WHERE ort_titel = ?";
-	private static final String ORT_CONNECTED_INSERT = "INSERT INTO personen_ort(personen_id, ort_id,quellen_id) "
+	private static final String ORT_CONNECTED_INSERT = "INSERT INTO person_ort(person_id, ort_id,quelle_id) "
 			+ " VALUES (?, ?, ?)";
 	private static final String WIRTLAGE_SIMPLE_INSERT = "INSERT INTO wirtschaftslage_liste(wl_titel) VALUES (?)";
 	private static final String WIRTLAGE_QUERY = "SELECT wl_id FROM wirtschaftslage_liste WHERE wl_titel = ?";
-	private static final String WIRTLAGE_CONNECTED_INSERT = "INSERT INTO personen_wirtlage(person_id, wl_id,quelle_id) "
+	private static final String WIRTLAGE_CONNECTED_INSERT = "INSERT INTO person_wirtschaftslage(person_id, wl_id,quelle_id) "
 			+ " VALUES (?, ?, ?)";
 	private static final String SEMINAR_SIMPLE_INSERT = "INSERT INTO seminar_liste(seminar_titel) VALUES (?)";
 	private static final String SEMINAR_QUERY = "SELECT seminar_id FROM seminar_liste WHERE seminar_titel = ?";
@@ -121,28 +121,29 @@ public class ReadCSVNew {
 				String anrede = splittedRow[3];
 				String anrede_normal = splittedRow[4];
 
-				iterateOverColumns(splittedRow, pid, VORNAME, VORNAME_AUB,
-						VORNAME_QUERY, VORNAME_SIMPLE_INSERT,
-						VORNAME_CONNECTED_INSERT);
-				
-//				iterateOverColumns(splittedRow, pid, NACHNAME_HS_B,
-//						NACHNAME_AUB, NACHNAME_QUERY, NACHNAME_SIMPLE_INSERT,
-//						NACHNAME_CONNECTED_INSERT);
-//				
-//				iterateOverColumns(splittedRow, pid, ORT_HS_B, ORT_NORMAL,
-//						ORT_QUERY, ORT_SIMPLE_INSERT, ORT_CONNECTED_INSERT);
-//				
-//				iterateOverColumns(splittedRow, pid, WIRTLAGE, WIRTLAGE_HS_J,
-//						WIRTLAGE_QUERY, WIRTLAGE_SIMPLE_INSERT,
-//						WIRTLAGE_CONNECTED_INSERT);
-//				
-//				iterateOverColumns(splittedRow, pid, SEMINAR, SEMINAR_HS_J,
-//						SEMINAR_QUERY, SEMINAR_SIMPLE_INSERT,
-//						SEMINAR_CONNECTED_INSERT);
-//				// lastName Stuff
-//				iterateOverColumns(splittedRow, pid, ZUSAETZE, ZUSAETZE_AUB,
-//						ZUSATZ_QUERY, ZUSATZ_SIMPLE_INSERT,
-//						ZUSATZ_CONNECTED_INSERT);
+				// iterateOverColumns(splittedRow, pid, VORNAME, VORNAME_AUB,
+				// VORNAME_QUERY, VORNAME_SIMPLE_INSERT,
+				// VORNAME_CONNECTED_INSERT);
+
+				iterateOverColumns(splittedRow, pid, NACHNAME_HS_B,
+						NACHNAME_AUB, NACHNAME_QUERY, NACHNAME_SIMPLE_INSERT,
+						NACHNAME_CONNECTED_INSERT);
+
+				iterateOverColumns(splittedRow, pid, ORT_HS_B, ORT_NORMAL,
+						ORT_QUERY, ORT_SIMPLE_INSERT, ORT_CONNECTED_INSERT);
+
+				iterateOverColumns(splittedRow, pid, WIRTLAGE, WIRTLAGE_HS_J,
+						WIRTLAGE_QUERY, WIRTLAGE_SIMPLE_INSERT,
+						WIRTLAGE_CONNECTED_INSERT);
+
+				iterateOverColumns(splittedRow, pid, SEMINAR, SEMINAR_HS_J,
+						SEMINAR_QUERY, SEMINAR_SIMPLE_INSERT,
+						SEMINAR_CONNECTED_INSERT);
+
+				// // have think about that
+				// iterateOverColumns(splittedRow, pid, ZUSAETZE, ZUSAETZE_AUB,
+				// ZUSATZ_QUERY, ZUSATZ_SIMPLE_INSERT,
+				// ZUSATZ_CONNECTED_INSERT);
 
 			}
 
@@ -168,11 +169,11 @@ public class ReadCSVNew {
 			int end, String sQLQuery, String sQLSimple, String sQLConnected) {
 		for (int j = start; j <= end; j++) {
 			if (!splittedRow[j].equals("")) {
-				
-				int nameKey=0;
+
+				int nameKey = 0;
 				try {
 					nameKey = queryValue(sQLQuery, splittedRow[j]);
-					if (nameKey == -1){
+					if (nameKey == -1) {
 						insertIntoDatabase(sQLSimple, splittedRow[j]);
 						nameKey = queryValue(sQLQuery, splittedRow[j]);
 					}
@@ -181,10 +182,10 @@ public class ReadCSVNew {
 					e.printStackTrace();
 				}
 				int[] values = { pid, nameKey, columnsMap.get(j) };
-				for (int i : values){
-				//System.out.print(i +" ");
+				for (int i : values) {
+					// System.out.print(i +" ");
 				}
-				//System.out.println();
+				// System.out.println();
 				writeToConnectingTable(values, sQLConnected);
 			}
 		}
@@ -199,7 +200,8 @@ public class ReadCSVNew {
 			preparedStatement.setInt(1, values[0]);
 			preparedStatement.setInt(2, values[1]);
 			preparedStatement.setInt(3, values[2]);
-			System.out.println("" + values[0]+ " " + values[1] + " " + values[2]);
+			System.out.println("" + values[0] + " " + values[1] + " "
+					+ values[2]);
 			preparedStatement.executeUpdate();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -208,27 +210,26 @@ public class ReadCSVNew {
 
 	}
 
-		
-	private int queryValue(String sqlQuery, String value) throws SQLException{
+	private int queryValue(String sqlQuery, String value) throws SQLException {
 		PreparedStatement prepareCheckValue = conn.prepareStatement(sqlQuery);
 		prepareCheckValue.setString(1, value);
 		ResultSet resultCheck = prepareCheckValue.executeQuery();
-		if(!resultCheck.next()){
+		if (!resultCheck.next()) {
 			return -1;
-		}else{
+		} else {
 			return resultCheck.getInt(1);
 		}
-		
-		
+
 	}
-	
-	
-	private void insertIntoDatabase  (String sqlQuery, String value) throws SQLException{
+
+	private void insertIntoDatabase(String sqlQuery, String value)
+			throws SQLException {
 		String insertQuery = sqlQuery;
-		PreparedStatement prepareCheckValue = conn.prepareStatement(insertQuery);
+		PreparedStatement prepareCheckValue = conn
+				.prepareStatement(insertQuery);
 		prepareCheckValue.setString(1, value);
 		prepareCheckValue.executeUpdate();
-			
+
 	}
 
 	private void generateColumnsMap(String splittedColumns[]) {
@@ -265,10 +266,10 @@ public class ReadCSVNew {
 				} else if (splittedColumns[i].contains("V E 38")) {
 					columnsMap.put(i, SourcesList.AUB_V);
 				} else if (splittedColumns[i].contains("NORMAL")) {
-					if(splittedColumns[i].contains("ABWEICH")){
+					if (splittedColumns[i].contains("ABWEICH")) {
 						columnsMap.put(i, SourcesList.ABWEICH_NORMAL);
-					}else
-					columnsMap.put(i, SourcesList.NORMAL);
+					} else
+						columnsMap.put(i, SourcesList.NORMAL);
 				} else {
 					columnsMap.put(i, SourcesList.OHNE_ZUSATZ);
 				}
@@ -278,16 +279,4 @@ public class ReadCSVNew {
 
 	}
 
-	private void writeFirstName(String firstName, int sourceId, int personId) {
-		int firstNameKey = 0;
-//		if (!firstNameMap.containsKey(firstName)) {
-//			firstNameCounter++;
-//			firstNameMap.put(firstName, firstNameCounter);
-//			firstNameKey = firstNameCounter;
-//
-//		} else {
-//			firstNameKey = firstNameMap.get(firstName);
-//		}
-
-	}
 }
